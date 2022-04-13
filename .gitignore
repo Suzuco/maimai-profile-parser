@@ -1,0 +1,4 @@
+.idea
+cache*.pickle
+database.pickle
+maidx_in_lv_data_universeplus.js
