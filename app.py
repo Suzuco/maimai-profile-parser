@@ -152,7 +152,7 @@ def probe(save_html=True, save_csv=True):
         records.to_csv("miaomiaodx_ratings_{}_{}.csv".format(session_account["segaId"], idx_aime))
     if save_html:
         records.to_html("miaomiaodx_ratings_{}_{}.html".format(session_account["segaId"], idx_aime))
-    return records.to_html()
+    return records
 
 
 if __name__ == "__main__":
