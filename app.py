@@ -149,9 +149,9 @@ def probe(save_html=True, save_csv=True):
     records = records.sort_values(by=['new', 'ratingf'], ascending=False)
 
     if save_csv:
-        records.to_csv("miaomiaodx_ratings_{}_{}.csv".format(session_account["segaId"], idx_aime))
+        records.to_csv("miaomiaodx_ratings_{}_{}.csv".format(session_account["segaId"], idx_aime), index=False)
     if save_html:
-        records.to_html("miaomiaodx_ratings_{}_{}.html".format(session_account["segaId"], idx_aime))
+        records.to_html("miaomiaodx_ratings_{}_{}.html".format(session_account["segaId"], idx_aime), index=False)
     return records
 
 
