@@ -8,7 +8,7 @@ import pickle
 with open("config.json", "r") as fp:
     use_cache = json.load(fp)["use_cache"]
 
-if use_cache:
+if not use_cache:
     url = 'https://sgimera.github.io/mai_RatingAnalyzer/scripts_maimai/maidx_in_lv_data_universeplus.js'
     js = requests.get(url).content
     with open('maidx_in_lv_data_universeplus.js', 'wb') as fp:
