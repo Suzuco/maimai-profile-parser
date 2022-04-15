@@ -33,7 +33,9 @@ abbrs = [('Sqlupp(Camellia)', """Sqlupp (Camellia's "Sqleipd*Hiytex" Remix)"""),
          ('Contrapasso', """Contrapasso -paradiso-"""),
          ('Excalibur', """Excalibur ～Revived resolution～"""),
          ('Caliburne', """Caliburne ～Story of the Legendary sword～"""),
-         ('otorii INNOVATED', """otorii INNOVATED -[i]3-""")]
+         ('otorii INNOVATED', """otorii INNOVATED -[i]3-"""),
+         ('felys', """felys -final remix-"""),
+         ('ワンダーシャッフェン', """ワンダーシャッフェンの法則""")]
 
 for abbr, full in abbrs:
     _py = _py.replace(abbr, full)
