@@ -1,4 +1,6 @@
 import json
+import sys
+
 import requests
 import re
 import pickle
@@ -15,15 +17,15 @@ else:
     with open('maidx_in_lv_data_universeplus.js', 'rb') as fp:
         js = fp.read()
 
-src = js.decode('utf-8')
+_py = js.decode('utf-8')
 
-src = src[src.find("const lv15_rslt"):src.find("const lv12_rslt")]
-src = re.sub(r'''<u>(.+)</u>''', "[NEW]\\1", src)
-src = re.sub(r'''"<span class='wk_(.)'>(.+?)(?:\(std\))?</span>"''', "    ('''\\2''', '\\1')", src)
-src = re.sub(r"const ", "", src)
-src = re.sub(r"\n\[", "\n  [", src)
-src = re.sub(r"\n]([\n,])", "\n  ]\\1", src)
-src = re.sub(r"];", "]", src)
+_py = _py[_py.find("const lv15_rslt"):_py.find("const lv12_rslt")]
+_py = re.sub(r'''<u>(.+)</u>''', "[NEW]\\1", _py)
+_py = re.sub(r'''"<span class='wk_(.)'>(.+?)(?:\(std\))?</span>"''', "    ('''\\2''', '\\1')", _py)
+_py = re.sub(r"const ", "", _py)
+_py = re.sub(r"\n\[", "\n  [", _py)
+_py = re.sub(r"\n]([\n,])", "\n  ]\\1", _py)
+_py = re.sub(r"];", "]", _py)
 
 lv15_rslt, lv14_rslt, lv13_rslt = None, None, None
 
@@ -34,11 +36,12 @@ abbrs = [('Sqlupp(Camellia)', """Sqlupp (Camellia's "Sqleipd*Hiytex" Remix)"""),
          ('otorii INNOVATED', """otorii INNOVATED -[i]3-""")]
 
 for abbr, full in abbrs:
-    src = src.replace(abbr, full)
+    _py = _py.replace(abbr, full)
 
-print(src)
 
-if input("Proceed (y/N)? ").lower() in ['y', 'yes']:
-    exec(src)
-    with open("database.pickle", "wb") as fp:
-        pickle.dump([*lv15_rslt, *lv14_rslt, *lv13_rslt], fp)
+if __name__ == '__main__':
+    print(_py)
+    if "-f" not in sys.argv and (input("Proceed (y/N)? ").lower() in ['y', 'yes']):
+        exec(_py)
+        with open("database.pickle", "wb") as fp:
+            pickle.dump([*lv15_rslt, *lv14_rslt, *lv13_rslt], fp)
