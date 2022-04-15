@@ -18,6 +18,7 @@ with open("config.json") as fp:
     use_cache = config["use_cache"]
     session_account = config["account_info"]
     idx_aime = config["idx_aime"]
+    show_played_only = config["show_played_only"]
 
 if use_cache:
     with open("cache_http_mas.pickle", "rb") as fp:
@@ -118,6 +119,9 @@ for html in tqdm(inner_html):
     i = html.find("div", {"class": "music_score_block w_120 t_r f_l f_12"})
     if i:
         score = float(i.text.strip()[:-1])
+    else:
+        if show_played_only:
+            continue
     i = html.find("div", {"class": "music_score_block w_180 t_r f_l f_12"})
     if i:
         dxscore = i.text.strip()

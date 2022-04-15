@@ -4,5 +4,6 @@
     "segaId": "",
     "password": ""
   },
-  "idx_aime": 0
+  "idx_aime": 0,
+  "show_played_only": true
 }
