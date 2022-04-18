@@ -1,11 +1,14 @@
 
 import json
+import sys
+
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 import pickle
 import numpy as np
 import pandas as pd
+from PIL import Image, ImageFont, ImageDraw, ImageFile
 
 
 def factors(_score):
@@ -109,15 +112,15 @@ def probe(save=None):
         lv = save_html.find("div", {"class": "music_lv_block"}).text
         ilv = 0
         score, dxscore = -1, ""
-        i = save_html.find("div", {"class": "music_score_block w_120 t_r f_l f_12"})
-        if i:
-            score = float(i.text.strip()[:-1])
+        img = save_html.find("div", {"class": "music_score_block w_120 t_r f_l f_12"})
+        if img:
+            score = float(img.text.strip()[:-1])
         else:
             if show_played_only:
                 continue
-        i = save_html.find("div", {"class": "music_score_block w_180 t_r f_l f_12"})
-        if i:
-            dxscore = i.text.strip()
+        img = save_html.find("div", {"class": "music_score_block w_180 t_r f_l f_12"})
+        if img:
+            dxscore = img.text.strip()
 
         # records = records.append({"type": kind, "new": new, "title": title, "difficulty": difficulty,
         #     "lv": lv, "ilv": ilv, "score": score, "dxscore": dxscore, "ratingf": 0, "rating": 0},
@@ -129,9 +132,9 @@ def probe(save=None):
                             columns=records.columns)
         records = pd.concat([records, item], ignore_index=True)
 
-    for i in range(len(db)):
-        _ilv = (150. - i) / 10
-        for j in db[i]:
+    for img in range(len(db)):
+        _ilv = (150. - img) / 10
+        for j in db[img]:
             k = j[0]
             x = "std"
             y = "NO"
@@ -155,9 +158,42 @@ def probe(save=None):
     if "html" in save:
         records.to_html("miaomiaodx_ratings_{}_{}.html".format(session_account["segaId"], idx_aime), index=False)
     if "png" in save:
-        pass
+        table_new = records.loc[records['new'] == 'YES'][["title", "ilv", "score", "rating"]][0:15]\
+            .reset_index(drop=True)
+        table_old = records.loc[records['new'] == 'NO'][["title", "ilv", "score", "rating"]][0:35]\
+            .reset_index(drop=True)
+        dxr_new, dxr_old = np.sum(table_new["rating"]), np.sum(table_old["rating"])
+        dxr = dxr_old + dxr_new
+
+        img = Image.new("RGB", (540, 980), "#d4f1ff")
+        fnt = ImageFont.truetype("sarasa-gothic-sc-regular.ttf", 14)
+        d = ImageDraw.Draw(img)
+        d.text((14, 14), "[NEW]{} + {} = {}".format(dxr_new, dxr_old, dxr), font=fnt, fill=(0, 0, 0))
+        d.text((170, 32), "==== 最新最热 BEST 15 ====", font=fnt, fill=(0, 0, 0))
+
+        for i in range(15):
+            if i >= len(table_new):
+                break
+            d.text((14, 50 + i * 18), str(table_new.iloc[i]["title"]), font=fnt, fill=(0, 0, 0))
+            d.text((320, 50 + i * 18), str(table_new.iloc[i]["ilv"]), font=fnt, fill=(0, 0, 0))
+            d.text((366, 50 + i * 18), str(table_new.iloc[i]["score"]), font=fnt, fill=(0, 0, 0))
+            d.text((462, 50 + i * 18), str(table_new.iloc[i]["rating"]), font=fnt, fill=(0, 0, 0))
+
+        d.text((170, 320), "==== 最冷最旧 BEST 35 ====", font=fnt, fill=(0, 0, 0))
+        for i in range(35):
+            if i >= len(table_old):
+                break
+            d.text((14, 338 + i * 18), str(table_old.iloc[i]["title"]), font=fnt, fill=(0, 0, 0))
+            d.text((320, 338 + i * 18), str(table_old.iloc[i]["ilv"]), font=fnt, fill=(0, 0, 0))
+            d.text((366, 338 + i * 18), str(table_old.iloc[i]["score"]), font=fnt, fill=(0, 0, 0))
+            d.text((462, 338 + i * 18), str(table_old.iloc[i]["rating"]), font=fnt, fill=(0, 0, 0))
+
+        with open("miaomiaodx_ratings_{}_{}.png".format(session_account['segaId'], idx_aime), "wb") as fp:
+            img.save(fp)
+
     return records
 
 
 if __name__ == "__main__":
-    probe()
+    if len(sys.argv) > 1:
+        probe(save=sys.argv[1:])
