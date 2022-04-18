@@ -7,7 +7,7 @@ prober = Flask(__name__)
 
 @prober.route("/", methods=["GET", "POST"])
 def show_page():
-    table = app.probe(False, False)
+    table = app.probe(save=[])
     assert isinstance(table, pd.DataFrame)
     table.drop(columns=["dxscore", "ratingf"], inplace=True)
     table.reset_index(drop=True, inplace=True)

@@ -27,9 +27,11 @@ def factors(_score):
         return 0
 
 
-def probe(save_html=True, save_csv=True):
+def probe(save=None):
     # REGION: fetch
     # script configuration
+    if save is None:
+        save = []
     with open("config.json") as fp:
         config = json.load(fp)
         use_cache = config["use_cache"]
@@ -148,10 +150,12 @@ def probe(save_html=True, save_csv=True):
 
     records = records.sort_values(by=['new', 'ratingf'], ascending=False)
 
-    if save_csv:
+    if "csv" in save:
         records.to_csv("miaomiaodx_ratings_{}_{}.csv".format(session_account["segaId"], idx_aime), index=False)
-    if save_html:
+    if "html" in save:
         records.to_html("miaomiaodx_ratings_{}_{}.html".format(session_account["segaId"], idx_aime), index=False)
+    if "png" in save:
+        pass
     return records
 
 
