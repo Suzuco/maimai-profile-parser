@@ -8,7 +8,7 @@ from bs4.element import Tag
 import pickle
 import numpy as np
 import pandas as pd
-from PIL import Image, ImageFont, ImageDraw, ImageFile
+from PIL import Image, ImageFont, ImageDraw
 
 
 def factors(_score):
